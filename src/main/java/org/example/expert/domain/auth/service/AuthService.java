@@ -27,11 +27,17 @@ public class AuthService {
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
 
+        String email = signupRequest.getEmail();
+
+        if (email == null || email.isBlank()) {
+            throw new InvalidRequestException("빈값이 들어왔습니다.");
+        }
+
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
 
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+        if (userRepository.existsByEmail(email)) {
             throw new InvalidRequestException("이미 존재하는 이메일입니다.");
         }
 
